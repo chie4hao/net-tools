@@ -10,7 +10,7 @@ import (
 	"sync"
 	"time"
 
-	cert "cert"
+	"github.com/chie4hao/net-tools"
 )
 
 // Proxy is a forward proxy that substitutes its own certificate
