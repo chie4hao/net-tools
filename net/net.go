@@ -1,4 +1,4 @@
-package mitm
+package net
 
 import (
 	"crypto/tls"
@@ -9,6 +9,8 @@ import (
 	"net/http/httputil"
 	"sync"
 	"time"
+
+	chie4cert "github.com/chie4hao/nettools/cert"
 )
 
 // Proxy is a forward proxy that substitutes its own certificate
@@ -115,7 +117,7 @@ func (p *Proxy) serveConnect(w http.ResponseWriter, r *http.Request) {
 }
 
 func (p *Proxy) cert(names ...string) (*tls.Certificate, error) {
-	return genCert(p.CA, names)
+	return chie4cert.GenCert(p.CA, names)
 }
 
 var okHeader = []byte("HTTP/1.1 200 OK\r\n\r\n")

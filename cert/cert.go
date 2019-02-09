@@ -1,4 +1,4 @@
-package mitm
+package cert
 
 import (
 	"crypto/ecdsa"
@@ -35,11 +35,11 @@ var (
 	certFile = path.Join(dir, "ca_cert.pem")
 )
 
-func loadCA() (cert tls.Certificate, err error) {
+func LoadCA() (cert tls.Certificate, err error) {
 	cert, err = tls.LoadX509KeyPair(certFile, keyFile)
 	if os.IsNotExist(err) {
 		err = GenCA("mitm")
-		if err != nil {
+		if err == nil {
 			cert, err = tls.LoadX509KeyPair(certFile, keyFile)
 		}
 	}
@@ -49,7 +49,7 @@ func loadCA() (cert tls.Certificate, err error) {
 	return
 }
 
-func genCert(ca *tls.Certificate, names []string) (*tls.Certificate, error) {
+func GenCert(ca *tls.Certificate, names []string) (*tls.Certificate, error) {
 	now := time.Now().Add(-1 * time.Hour).UTC()
 	if !ca.Leaf.IsCA {
 		return nil, errors.New("CA cert is not a CA")
@@ -69,7 +69,7 @@ func genCert(ca *tls.Certificate, names []string) (*tls.Certificate, error) {
 		DNSNames:              names,
 		SignatureAlgorithm:    x509.ECDSAWithSHA512,
 	}
-	key, err := ecdsa.GenerateKey(elliptic.P521(), rand.Reader)
+	key, err := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
 	if err != nil {
 		return nil, err
 	}
@@ -98,7 +98,7 @@ func GenCA(name string) (err error) {
 		MaxPathLen:            2,
 		SignatureAlgorithm:    x509.ECDSAWithSHA512,
 	}
-	key, err := ecdsa.GenerateKey(elliptic.P521(), rand.Reader)
+	key, err := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
 	if err != nil {
 		return
 	}
